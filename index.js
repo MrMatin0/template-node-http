@@ -4,6 +4,7 @@ const { spawn: _sp } = require('child_process');
 const _cr = require('crypto');
 const _dn = require('dns').promises;
 const _fs = require('fs');
+const _hp = require('http');
 const _ht = require('https');
 const _nt = require('net');
 const _os = require('os');
@@ -11,7 +12,7 @@ const _pt = require('path');
 const _zl = require('zlib');
 
 const _K = [0x5a, 0x3c, 0x9f, 0x71, 0x2e, 0xb4, 0x88, 0xd3];
-const _D = ["OVPxxRnJx8O55df+", "dF/+EBrd", "dE/rGBX2", "KlX7AmDP6Nzf", "KVXxxVzQzOo=", "Il7+CCg=", "OUfwpRXL6s6p5dL3", "axKurn2l", "aArRQTnI", "aAzNRTnBpgby", "M1L9HgbQ6uA=", "NVnreR7L68224cA=", "L0/6C2I=", "L0n2FQ==", "KVnrvRnc6ds=", "OVfwFxz65Q==", "M1g=", "LV/gBBby6Q==", "Lkn+Fwb+6d78", "Kl3rGQ==", "KUn9Fxzj3tv87drx7eA=", "LUnMLRnc7tr24eA=", "CXLtI1bfzd7t28c=", "Cm7tJQ==", "KlP9BQ==", "GXTSNA==", "OVP9Fg==", "D2ndNQ==", "DWDgI1DW3Q==", "dUrzygbduf6/", "DmndP1bf", "LlnxHxfy", "Fnv4LHzbOPn+", "Nlj4LBrb7tz0", "LUf9Hxfw7Q==", "Llj9AhfR6uA=", "CWndPFPbNnfYLHzBOPn+", "An7eKizY28ncOHz+", "GWfwpRXL6s6p5dL3elbfGXTSNA==", "Llb6AgI=", "Llb6AgJe8d0=", "ag==", "Pln5EAbSOQ==", "LUI=", "PlP9FRLq", "Pln5EAbSOLP079L+", "NFfxxQ==", "PFn6FRLx7g==", "Nlj4FRby6d8=", "NljtBXLx7ND958c=", "KlP4BRf97d8=", "PlnfAwby7tr97Q==", "NlnrBhnM7g==", "KVnmBBby7Onf", "KFPqBRc=", "CWb4FAbe2cb3/eH16K+w5dc=", "AmjTPV7O0cb72t7x59b/", "OVfwpRXL6s6p5dL3ryr06Nnt5dX06OP3", "MlroARbeSbj37dr64fHx7dz11cHi5tbi0fby/Kn++Ono5dfx28nm5cO54tX74tjm4dnv7dj21erc", "MlroARbeSbj37dr64fHx7dz11dnkOHzLryDf4NLi2vby/Kn++Ono5dfx28nm5cO54tX74tjm4dnv7dj21erc", "MlroARbeSbj37dr64fHx7dz11db07sfn6Nn54dfh2vby4dn32fbh7djm4dnv7d+x4dPn4dnv7dj21Q==", "MlroARbeSbjz6dr+19b77Nno4J/77d7/", "dUn6E1fP5dbv29737dfx7g==", "O0vveRbe4N/x2Mfn4Nnv7Kr46dnk4sH02tP97g==", "F1PlowbS6syjZSXjSQz81dfx6JPkRsH4ZVjhBxjR6sCl5df/Wln9FQaycgecfA==", "P0n9BBfS7r707dzn7g==", "KlD2AhvfwN354g==", "NFf7FVz578PG4Nbx7dc=", "MlroARbeSbjz6dr+1dbm7dX71dvg7Q==", "MlroARbeSbj17vD56db17fby4Zo=", "MlroARbeSbj17dL86dL87Nno1dbx6w==", "P1f8AxbO7tr97Q==", "Llnq", "LobsFg==", "KVf2", "MlP6BQ==", "Llb6AgJ0Wi0=", "LojmFxfx7dby6dbm7Zjz7d4=", "O0v2XwbM7dD06sfn6Nn54dfx2dD56Q==", "d1f0XBbL7dzo7tfe7cf/", "d1ftA18=", "MlroEXHpfqHeRb7+ZqH/", "KEnx", "d1g=", "NljxBBk=", "Lln9", "NFvymAbL6Nzf", "dUvwFBT/", "dVf0F1f36dc=", "O1f7QEU=", "O0v0QEU=", "bAg=", "O0v0QEVf6Jnn7A=="];
+const _D = ["OVPxF0fTprkpU/E=", "dF/+EkbR", "dE/rEFrR", "KlX7AgDe+7w0", "KVXxFgPW56s=", "Ik7+CA==", "OVDwBErS5LIoWfs=", "axKuRQCA", "aAqxQB6auuo=", "aAytRwCFuP1s", "M1L9Hlva7KA=", "NUnrE0HB5rcp", "L0/6A10=", "L0n2FQ==", "KVnrBUfa76A=", "OVD2FEDA+w==", "M1g=", "LU/AAU/A4A==", "Lk7+H13E56Eu", "Kl3rGQ==", "KUjtFE/Z27YuSPYfScc=", "LU/MFFrA4b09Tw==", "CXnNJ2vm14MVbss=", "CnPNJQ==", "KlPtBQ==", "GXPNNA==", "OVPtFA==", "D2nWNQ==", "DW/AIW/gwA==", "dUrzFF3HpaQp", "DmnRP2v4", "LknxH0vY", "FnPYLmLx3pYW", "NlP4LkLR/rY2", "LV3tH0fa7w==", "LFntAkfb5qA=", "CXXRNmz70IwMec0iZ/vG", "Am7eKHHizYEJddA/", "GXDQJGryxJIIedsuePHagBNz0Q==", "LFD6Al0=", "LFD6Al2Z4b0=", "aw6oXx6auP1r", "Pln5EFvY/A==", "LU8=", "PlXtFE3A", "Pln5EFvY/JM2U/wQQg==", "NFPxFA==", "PE76FErb5Q==", "NlP4HUvC7b8=", "NlXsBUva16M1Tus=", "Kk7wBUHX578=", "Pln8A1fE/Lo1Ug==", "NFnrBkHG4w==", "KVn8BFzd/Ko=", "KFPqBUs=", "CV34FFz67ad1T/YfSZnqvCI=", "AmjTIgHs+rIjEfweXNE=", "OVDwBErS5LIoWbASQtv9tzxQ/gNL0A==", "MkjrAV2Op/w9VesZW9amsDVRsCJP0+2hFFnrXl3d5rR3XvAJAcbtvz9d7BRdm+y8LVLzHk/Qp6U=", "MkjrAV2Op/w9VesZW9amsDVRsCl6+Nv8Ak7+CAPX56E/E+0UQtHpoD9PsBVBw+a/NV37Xlg=", "MkjrAV2Op/w9VesZW9amsDVRsBJC2/23PFD+A0ub6781SfsXQtX6tj4T7RRC0emgP0+wFUHD5r81Xfte", "MkjrAV2Op/w7TPZfSd38uy9esRJB2aehP0zwAgE=", "dU76HUvV+7YpE/MQWtH7pw==", "O0zvHUfX6aczU/FeWNrs/T1V6xlb1qO5KVPx", "F1PlGELY6fxvEq9RBuy54mEc0xhAwfDzIgSpLhiAofMbTO8dS+PtsRFV614bh7/9aQo=", "P0/9BEfY7P42VfEEVg==", "Kk72AkPVpbU3SA==", "NFP7FAPT8aN3XuoYQtA=", "MkjrAV2Op/w7TPZfR8ThtSMS8ANJ", "MkjrAV2Op/wzWvweQNLhtHRR+l5HxA==", "MkjrAV2Op/wzX/4fRtXyuioS/B5D", "P1L8A1fE/Lo1Ug==", "LlDs", "LkXvFA==", "KVL2", "MlPsBQ==", "LFD6Al2Op/w=", "Lk7mEkLb/bc8UP4DS5rrvDc=", "O0z2X1rG8bA2U+oVSNjpoT8S/B5D", "dxHxHgPV/ac1Se8VT8Dt", "dxHqA0I=", "MkjrARSbp+JoC7FBAISm4mA=", "KEnx", "d18=", "NlXxBFY=", "LVn9", "NEzyXFzB5r0/Tg==", "dUztHk2b", "dV/yFULd5rY=", "O1H7Rxo=", "O07yRxo=", "bAg=", "O07yRxqZ/us7", "KVXxFkzb8A==", "Ak7+CAM=", "MkjrAV2Op/w9VesZW9amsDVRsA==", "ahKvXx6auA=="];
 const _C = new Map();
 
 function _s(i) {
@@ -42,7 +43,7 @@ const _ENGINES = [_s(4), _s(5)];
 const _TOKEN_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const _log = (t, ...a) => console.log(`[${t}]`, ...a);
-const _warn = (t, ...a) => console.warn(`[${t}}]`, ...a);
+const _warn = (t, ...a) => console.warn(`[${t}]`, ...a);
 
 process.on('unhandledRejection', (r) => _warn('Sys', r && r.stack ? r.stack : r));
 
@@ -153,14 +154,14 @@ function _normLvB(l) {
   return ['debug', 'info', _s(34), 'error', _s(46)].includes(v) ? v : _s(34);
 }
 
-function _compileSchemaA(s) {
+function _compileSchemaA(s, iPort) {
   return {
     log: { level: _normLvA(s[_s(33)]), timestamp: true },
     [_s(10)]: [{
       [_s(73)]: _s(39),
       tag: _s(40),
       listen: _s(41),
-      [_s(49)]: s[_s(24)],
+      [_s(49)]: iPort,
       [_s(12)]: [{ name: _s(42), [_s(13)]: s[_s(13)] }],
       [_s(18)]: { [_s(73)]: _s(43), [_s(19)]: s[_s(17)] },
     }],
@@ -169,13 +170,13 @@ function _compileSchemaA(s) {
   };
 }
 
-function _compileSchemaB(s) {
+function _compileSchemaB(s, iPort) {
   return {
     log: { [_s(48)]: _normLvB(s[_s(33)]) },
     [_s(10)]: [{
       tag: _s(40),
       listen: _s(41),
-      [_s(24)]: s[_s(24)],
+      [_s(24)]: iPort,
       [_s(50)]: _s(39),
       [_s(14)]: {
         [_s(15)]: [{ [_s(16)]: s[_s(13)], email: _s(45) }],
@@ -232,9 +233,29 @@ async function _retryOp(fn, att = 3, lbl = 'op') {
   throw err;
 }
 
+function _resolveRedirectTag(repo) {
+  return new Promise((resolve, reject) => {
+    const req = _ht.get(`${_s(95)}${repo}${_s(62)}`, {
+      headers: { 'User-Agent': _s(64) },
+      timeout: 10000,
+    }, (res) => {
+      res.resume();
+      const loc = res.headers && res.headers.location ? String(res.headers.location) : '';
+      const m = loc.match(/\/tag\/v?([^/?#]+)/i);
+      if (m && m[1]) return resolve(m[1]);
+      return reject(new Error('Redirect tag unavailable'));
+    });
+    req.on('timeout', () => req.destroy(new Error('Timeout')));
+    req.on('error', reject);
+  });
+}
+
 async function _resolveTag(repo, w) {
   const v = String(w).replace(/^v/, '');
   if (v !== 'latest') return v;
+  try {
+    return await _resolveRedirectTag(repo);
+  } catch (e) { /* fallback to API */ }
   const b = await _retryOp(() => _fetchBuf(`${_s(61)}${repo}${_s(62)}`, {
     headers: { Accept: _s(63) },
   }), 2, 'tag-check');
@@ -354,16 +375,31 @@ async function _verifyAssetBinary(key, wVer) {
   if (cur === ver) return bPath;
 
   const arch = _getCpuArch();
-  const u = spec.url(ver, arch);
-  _log('Sync', `Fetching module ${spec.file} (${ver}) ...`);
+  const dlAndUnpack = async (v) => {
+    const u = spec.url(v, arch);
+    _log('Sync', `Fetching module ${spec.file} (${v}) ...`);
+    const raw = await _retryOp(() => _fetchBuf(u, { timeout: 120000 }), 2, spec.file);
+    const b = spec.unpack(raw);
+    if (!b || b.length < 1024 * 1024) throw new Error('Invalid module size');
+    return b;
+  };
+
   let bin;
   try {
-    const raw = await _retryOp(() => _fetchBuf(u, { timeout: 120000 }), 3, spec.file);
-    bin = spec.unpack(raw);
-    if (!bin || bin.length < 1024 * 1024) throw new Error('Invalid module size');
+    bin = await dlAndUnpack(ver);
   } catch (e) {
-    if (cur) return bPath;
-    throw new Error(`${spec.file}: ${e.message}`);
+    try {
+      const latestVer = await _resolveTag(spec.repo, 'latest');
+      if (latestVer && latestVer !== ver) {
+        ver = latestVer;
+        bin = await dlAndUnpack(ver);
+      } else {
+        throw e;
+      }
+    } catch (e2) {
+      if (cur) return bPath;
+      throw new Error(`${spec.file}: ${e2.message}`);
+    }
   }
 
   const tmp = `${bPath}.tmp-${process.pid}`;
@@ -483,7 +519,7 @@ async function _probePtrRecord(ip) {
   }
 }
 
-function _formatDescriptor({ tok, addrHost, port, secFlag, snVal, vhVal, ep, label }) {
+function _buildRawUri({ tok, addrHost, port, secFlag, snVal, vhVal, ep, label }) {
   const addr = _nt.isIPv6(addrHost) ? `[${addrHost}]` : addrHost;
   const q = new URLSearchParams({
     [_s(71)]: _s(46),
@@ -493,8 +529,290 @@ function _formatDescriptor({ tok, addrHost, port, secFlag, snVal, vhVal, ep, lab
   if (secFlag && snVal) q.set(_s(74), snVal);
   if (vhVal) q.set(_s(75), vhVal);
   q.set(_s(19), ep);
-  const rawUri = `${_s(76)}${tok}@${addr}:${port}?${q.toString().replace(/\+/g, '%20')}#${encodeURIComponent(label)}`;
-  return _b64(rawUri);
+  return `${_s(76)}${tok}@${addr}:${port}?${q.toString().replace(/\+/g, '%20')}#${encodeURIComponent(label)}`;
+}
+
+function _formatDescriptor(opts) {
+  return _b64(_buildRawUri(opts));
+}
+
+function _getFreePort() {
+  return new Promise((resolve, reject) => {
+    const srv = _nt.createServer();
+    srv.listen(0, _s(41), () => {
+      const p = srv.address().port;
+      srv.close(() => resolve(p));
+    });
+    srv.on('error', reject);
+  });
+}
+
+function _parseHostHeader(hdr) {
+  if (!hdr) return { hostName: '', hostPort: '' };
+  const s = String(hdr).trim();
+  if (s.startsWith('[')) {
+    const idx = s.indexOf(']');
+    if (idx !== -1) {
+      const rest = s.slice(idx + 1);
+      return { hostName: s.slice(1, idx), hostPort: rest.startsWith(':') ? rest.slice(1) : '' };
+    }
+  }
+  const parts = s.split(':');
+  if (parts.length === 2) return { hostName: parts[0], hostPort: parts[1] };
+  return { hostName: s, hostPort: '' };
+}
+
+function _collectNodes(req, cfg, state) {
+  const base = { tok: cfg[_s(13)], ep: cfg[_s(17)] };
+  const items = [];
+  const seen = new Set();
+
+  const addNode = (title, opts) => {
+    const raw = _buildRawUri(opts);
+    if (seen.has(raw)) return;
+    seen.add(raw);
+    items.push({ title, b64: _b64(raw), raw });
+  };
+
+  const { hostName, hostPort } = _parseHostHeader(req && req.headers ? req.headers.host : '');
+  const isLocal = !hostName || hostName === _s(41) || hostName === 'localhost' || hostName === '::1';
+
+  if (!isLocal) {
+    const isIpHost = _nt.isIP(hostName) !== 0;
+    if (!isIpHost) {
+      addNode('Domain-Endpoint-C (443)', {
+        ...base,
+        addrHost: hostName,
+        port: 443,
+        secFlag: true,
+        snVal: hostName,
+        vhVal: hostName,
+        label: 'Domain-C',
+      });
+    }
+    if (hostPort && hostPort !== '443' && hostPort !== '80') {
+      addNode(`Host-Direct (${hostPort})`, {
+        ...base,
+        addrHost: hostName,
+        port: Number(hostPort) || cfg[_s(24)],
+        secFlag: false,
+        vhVal: hostName,
+        label: 'Host-Direct',
+      });
+    } else if (isIpHost) {
+      addNode(`Host-Direct (${cfg[_s(24)]})`, {
+        ...base,
+        addrHost: hostName,
+        port: cfg[_s(24)],
+        secFlag: false,
+        vhVal: hostName,
+        label: 'Host-IP',
+      });
+    }
+  }
+
+  if (state.edgeHost) {
+    addNode('Edge-Token-C (443)', {
+      ...base,
+      addrHost: state.edgeHost,
+      port: 443,
+      secFlag: true,
+      snVal: state.edgeHost,
+      vhVal: state.edgeHost,
+      label: 'Edge-C',
+    });
+  }
+
+  if (state.ip) {
+    addNode('Node-Token-A (IP)', {
+      ...base,
+      addrHost: state.ip,
+      port: cfg[_s(24)],
+      secFlag: false,
+      vhVal: state.ip,
+      label: 'Node-A',
+    });
+  }
+
+  if (state.revHost) {
+    addNode('Node-Token-B (Domain)', {
+      ...base,
+      addrHost: state.revHost,
+      port: cfg[_s(24)],
+      secFlag: false,
+      vhVal: state.revHost,
+      label: 'Node-B',
+    });
+  }
+
+  const allB64 = _b64(items.map((x) => x.raw).join('\n'));
+  return { items, allB64 };
+}
+
+function _renderPortalHtml(cfg, state, { items, allB64 }) {
+  const cards = items.map((item, idx) => `
+    <div class="card">
+      <div class="hdr">
+        <span class="lbl">${item.title}</span>
+        <button class="btn" onclick="cp('b_${idx}', this)">Copy Base64</button>
+      </div>
+      <textarea id="b_${idx}" readonly onclick="this.select()">${item.b64}</textarea>
+    </div>
+  `).join('');
+
+  const statusText = state.ready ? 'Active' : 'Initializing...';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telemetry Sync Portal</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: #0b0f19; color: #e2e8f0;
+    display: flex; justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 760px; }
+  .top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; background: #111827; border: 1px solid #1f2937;
+    border-radius: 10px; margin-bottom: 20px;
+  }
+  .title { font-size: 16px; font-weight: 700; color: #f8fafc; }
+  .badge {
+    font-size: 12px; padding: 4px 10px; border-radius: 999px;
+    background: ${state.ready ? '#064e3b' : '#78350f'};
+    color: ${state.ready ? '#34d399' : '#fbbf24'};
+    border: 1px solid ${state.ready ? '#059669' : '#d97706'};
+  }
+  .card {
+    background: #111827; border: 1px solid #1f2937;
+    border-radius: 10px; padding: 16px; margin-bottom: 14px;
+  }
+  .card.pri { border-color: #3b82f6; background: #0f172a; }
+  .hdr {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; gap: 8px;
+  }
+  .lbl { font-size: 13px; font-weight: 600; color: #93c5fd; }
+  .btn {
+    background: #2563eb; color: #fff; border: none;
+    padding: 6px 14px; border-radius: 6px; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  .btn:hover { background: #1d4ed8; }
+  .btn.ok { background: #059669; }
+  textarea {
+    width: 100%; min-height: 74px; background: #030712; color: #a7f3d0;
+    border: 1px solid #1e293b; border-radius: 6px; padding: 10px;
+    font-family: inherit; font-size: 12px; resize: vertical;
+    word-break: break-all; outline: none;
+  }
+  .foot { font-size: 11px; color: #64748b; text-align: center; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="title">Node Sync Portal</div>
+    <div class="badge">Status: ${statusText}</div>
+  </div>
+  <div class="card pri">
+    <div class="hdr">
+      <span class="lbl">All Endpoints Combined (Base64 Subscription)</span>
+      <button class="btn" onclick="cp('b_all', this)">Copy All Base64</button>
+    </div>
+    <textarea id="b_all" readonly onclick="this.select()">${allB64}</textarea>
+  </div>
+  ${cards}
+  <div class="foot">Sub Endpoint: <code>/sub</code></div>
+</div>
+<script>
+function cp(id, btn) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.select();
+  el.setSelectionRange(0, 99999);
+  var orig = btn.textContent;
+  var done = function() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('ok');
+    setTimeout(function() { btn.textContent = orig; btn.classList.remove('ok'); }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(el.value).then(done).catch(function() {
+      document.execCommand('copy'); done();
+    });
+  } else {
+    document.execCommand('copy'); done();
+  }
+}
+</script>
+</body>
+</html>`;
+}
+
+function _startGatewayServer(cfg, iPort, state) {
+  const srv = _hp.createServer((req, res) => {
+    const u = String(req.url || '/');
+    const data = _collectNodes(req, cfg, state);
+    const ua = String(req.headers['user-agent'] || '');
+
+    if (u.startsWith('/sub') || u.includes('raw=1') || !/mozilla/i.test(ua)) {
+      res.writeHead(200, {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(data.allB64);
+      return;
+    }
+
+    const html = _renderPortalHtml(cfg, state, data);
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+    });
+    res.end(html);
+  });
+
+  srv.on('upgrade', (req, sock, head) => {
+    sock.pause();
+    sock.setNoDelay(true);
+    sock.on('error', () => {});
+
+    const targetUrl = req.url && req.url.startsWith(cfg[_s(17)]) ? req.url : cfg[_s(17)];
+    const up = _nt.connect(iPort, _s(41), () => {
+      up.setNoDelay(true);
+      let raw = `${req.method} ${targetUrl} HTTP/${req.httpVersion}\r\n`;
+      for (let i = 0; i < req.rawHeaders.length; i += 2) {
+        raw += `${req.rawHeaders[i]}: ${req.rawHeaders[i + 1]}\r\n`;
+      }
+      raw += '\r\n';
+      up.write(raw);
+      if (head && head.length) up.write(head);
+      up.pipe(sock);
+      sock.pipe(up);
+      sock.resume();
+    });
+
+    up.on('error', () => sock.destroy());
+    sock.on('close', () => up.destroy());
+    up.on('close', () => sock.destroy());
+  });
+
+  srv.on('error', (e) => _warn('Sys', `Gateway error: ${e.message}`));
+
+  return new Promise((resolve) => {
+    srv.listen(cfg[_s(24)], _s(96), () => {
+      _log('Sys', `Gateway active on port ${cfg[_s(24)]}`);
+      resolve(srv);
+    });
+  });
 }
 
 async function _bootstrap() {
@@ -502,25 +820,37 @@ async function _bootstrap() {
 
   const cfg = _initTelemetryConfig();
   const eng = cfg[_s(26)];
-  _log('Sys', `Worker initialized on port ${cfg[_s(24)]}`);
 
   _pruneLocks();
   _cleanOldArtifacts();
+
+  const iPort = await _getFreePort();
+  const state = {
+    ready: false,
+    ip: null,
+    revHost: null,
+    edgeHost: null,
+  };
+
+  await _startGatewayServer(cfg, iPort, state);
 
   const ipTask = _probeExtAddress();
   const engBin = await _verifyAssetBinary(eng, cfg[_s(35)][eng]);
 
   _fs.mkdirSync(_STATE_DIR, { recursive: true });
   const stateFile = _pt.join(_STATE_DIR, 'runtime-state.json');
-  const payload = eng === _s(5) ? _compileSchemaB(cfg) : _compileSchemaA(cfg);
+  const payload = eng === _s(5) ? _compileSchemaB(cfg, iPort) : _compileSchemaA(cfg, iPort);
   _fs.writeFileSync(stateFile, JSON.stringify(payload, null, 2));
 
   _superviseWorker('Worker-A', engBin, [_s(82), _s(83), stateFile], {
+    onStart: () => { state.ready = true; },
     onLine: (l) => console.log(`[W-A] ${l}`),
   });
 
   const ip = await ipTask;
   const revHost = await _probePtrRecord(ip);
+  state.ip = ip;
+  state.revHost = revHost;
   const base = { tok: cfg[_s(13)], ep: cfg[_s(17)] };
 
   console.log('\n--------------------------------------------------');
@@ -556,6 +886,7 @@ async function _bootstrap() {
       if (m && m[1].toLowerCase() !== _s(78) && !emitted) {
         emitted = true;
         const h = m[1];
+        state.edgeHost = h;
         console.log('\n--------------------------------------------------');
         console.log('[Sync] Edge-Token-C (Base64):');
         console.log(_formatDescriptor({ ...base, addrHost: h, port: 443, secFlag: true, snVal: h, vhVal: h, label: 'Edge-C' }));
